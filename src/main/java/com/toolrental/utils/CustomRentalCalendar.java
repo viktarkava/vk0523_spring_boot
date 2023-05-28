@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
+//vk0523
+
 @Component
 public class CustomRentalCalendar {
 	private Set<LocalDate> holidays = new HashSet<>();

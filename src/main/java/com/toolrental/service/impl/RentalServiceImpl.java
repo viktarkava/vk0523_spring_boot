@@ -18,6 +18,8 @@ import com.toolrental.response.RentalAgreement;
 import com.toolrental.service.RentalService;
 import com.toolrental.utils.CustomRentalCalendar;
 
+//vk0523
+
 @Service
 public class RentalServiceImpl implements RentalService {
 
@@ -37,8 +39,6 @@ public class RentalServiceImpl implements RentalService {
 				break;
 			}
 		}
-
-		// TODO: when ret is null
 		if (ret == null) {
 			throw new ToolRentalException(code + ErrorMessages.TOOL_CODE_IS_NOT_PRESENT.getErrorMessage());
 		}

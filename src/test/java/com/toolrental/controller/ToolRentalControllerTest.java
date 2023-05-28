@@ -35,8 +35,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
+//vk0523
+
 @SpringBootTest
-//@AutoConfigureMockMvc
 public class ToolRentalControllerTest {
 
 	@Mock

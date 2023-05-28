@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.toolrental.enity.Tool;
@@ -13,6 +12,8 @@ import com.toolrental.exceptions.ToolRentalException;
 import com.toolrental.repository.ToolRepository;
 import com.toolrental.response.RentalAgreement;
 import com.toolrental.service.RentalService;
+
+//vk0523
 
 @RestController
 @RequestMapping("/tools")
@@ -29,16 +30,10 @@ public class ToolController {
 	}
 
 	@GetMapping
-	Iterable<Tool> getCoffees() {
+	Iterable<Tool> getTools() {
 		return toolRepository.findAll();
 	}
-	
-	@RequestMapping("/")
-	public @ResponseBody String greeting() {
-		return "Hello, World";
-	}
 
-	// @GetMapping("/{code}/{rentalDays}/{discountPercent}/{checkoutDate}")
 	@GetMapping("/rent")
 	public RentalAgreement getToolByCode(@RequestParam Map<String, String> customQuery) throws ToolRentalException {
 
@@ -46,6 +41,7 @@ public class ToolController {
 		String rentalDays = customQuery.get("rentalDays");
 		String discountPercent = customQuery.get("discountPercent");
 		String checkoutDate = customQuery.get("checkoutDate");
-		return rentalService.rentTool(code, Integer.valueOf(rentalDays), Integer.valueOf(discountPercent), checkoutDate);
+		return rentalService.rentTool(code, Integer.valueOf(rentalDays), Integer.valueOf(discountPercent),
+				checkoutDate);
 	}
 }

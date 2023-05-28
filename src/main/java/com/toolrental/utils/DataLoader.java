@@ -9,6 +9,8 @@ import com.toolrental.repository.ToolRepository;
 
 import jakarta.annotation.PostConstruct;
 
+//vk0523
+
 @Component
 public class DataLoader {
 	private final ToolRepository toolRepository;

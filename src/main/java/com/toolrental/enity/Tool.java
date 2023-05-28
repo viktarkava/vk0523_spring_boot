@@ -5,6 +5,8 @@ import java.util.UUID;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+//vk0523
+
 @Entity
 public class Tool {
 	@Id

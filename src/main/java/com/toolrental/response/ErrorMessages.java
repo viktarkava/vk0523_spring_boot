@@ -1,5 +1,7 @@
 package com.toolrental.response;
 
+//vk0523
+
 public enum ErrorMessages {
 	RENTAL_DAY_COUNT("Rental day count must be 1 or greater."), INCORRECT_DATE("Enter correct date MM/dd/yyyy"),
 	RENTAL_DISCOUNT("Rental discount must be between 0 and 100"),

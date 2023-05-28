@@ -11,6 +11,8 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.toolrental.response.ErrorMessage;
 
+//vk0523
+
 @ControllerAdvice
 public class AppExceptionHandler {
 	@ExceptionHandler(value = { ToolRentalException.class })
