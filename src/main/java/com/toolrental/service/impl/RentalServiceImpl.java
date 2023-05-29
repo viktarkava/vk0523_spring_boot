@@ -62,8 +62,9 @@ public class RentalServiceImpl implements RentalService {
 		double rentPreDiscount = calculateRentPreDiscount(ret, chargeDays);
 		agr.setPreDiscountCharge("$" + df.format(rentPreDiscount));
 		agr.setDiscountPercent(discoutPercent + "%");
-		agr.setDiscountAmount("$" + df.format(rentPreDiscount * discoutPercent / 100));
-		agr.setFinalCharge("$" + df.format(calculateRentWithDiscount(rentPreDiscount, discoutPercent)));
+		double discountAmount = rentPreDiscount * discoutPercent / 100;
+		agr.setDiscountAmount("$" + df.format(discountAmount));
+		agr.setFinalCharge("$" + df.format(rentPreDiscount - discountAmount));
 		return agr;
 	}
 
@@ -87,29 +88,23 @@ public class RentalServiceImpl implements RentalService {
 		return rentPreDiscount * (100 - discount) / 100;
 	}
 
-	// TODO: remove print statements
 	private int getChargeDays(Tool tool, int daysOfRental, LocalDate startDate) {
 		int ret = 0;
 		// Charge days - Count of chargeable days, from day after checkout through and
 		// including due date, excluding “no charge” days as specified by the tool type.
 		startDate = startDate.plusDays(1);
-		System.out.println("startDate: " + startDate);
 		LocalDate endDate = startDate.plusDays(daysOfRental - 1);
-		System.out.println("endDate: " + endDate);
 		calendar.calculateHolidays(startDate.getYear());
 		if (tool.isWeekdayCharge()) {
 			int numberOfWorkDays = calendar.getNumberOfWorkdaysBetween(startDate, endDate);
-			System.out.println("numberOfWorkDays: " + numberOfWorkDays);
 			ret += numberOfWorkDays;
 		}
 		if (tool.isWeekendCharge()) {
 			int numberOfWeekends = calendar.getNumberOfWeekendsBetween(startDate, endDate);
-			System.out.println("numberOfWeekends: " + numberOfWeekends);
 			ret += numberOfWeekends;
 		}
 		if (tool.isHolidayCharge()) {
 			int numberOfHolidays = calendar.getNumberOfHolidaysBetween(startDate, endDate);
-			System.out.println("numberOfHolidays: " + numberOfHolidays);
 			ret += numberOfHolidays;
 		}
 		return ret;

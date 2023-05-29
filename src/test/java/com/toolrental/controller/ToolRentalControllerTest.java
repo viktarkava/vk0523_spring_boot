@@ -54,16 +54,21 @@ public class ToolRentalControllerTest {
 
 	List<Tool> toolList;
 
+	private final Tool CHNS = new Tool("CHNS", "Chainsaw", "Stihl", 1.49, true, false, true);
+	private final Tool JAKR = new Tool("JAKR", "Jackhammer", "Ridgid", 2.99, true, false, false);
+	private final Tool LADW = new Tool("LADW", "Ladder", "Werner", 1.99, true, true, false);
+	private final Tool JAKD = new Tool("JAKD", "Jackhammer", "DeWalt", 2.99, true, false, false);
+
 	@BeforeEach
 	void setUp() throws Exception {
 		calendar = Mockito.spy(new CustomRentalCalendar());
 		rentalService = Mockito.spy(new RentalServiceImpl());
 		MockitoAnnotations.openMocks(this);
 		toolList = new ArrayList<>();
-		toolList.add(new Tool("CHNS", "Chainsaw", "Stihl", 1.49, true, false, true));
-		toolList.add(new Tool("LADW", "Ladder", "Werner", 1.99, true, true, false));
-		toolList.add(new Tool("JAKD", "Jackhammer", "DeWalt", 2.99, true, false, false));
-		toolList.add(new Tool("JAKR", "Jackhammer", "Ridgid", 2.99, true, false, false));
+		toolList.add(CHNS);
+		toolList.add(JAKR);
+		toolList.add(LADW);
+		toolList.add(JAKD);
 	}
 
 	@Test
@@ -73,16 +78,13 @@ public class ToolRentalControllerTest {
 		// Rental days 5
 		// Discount 101%
 
-		String toolCode = "JAKR";
+		String rentalDays = "5";
+		String checkoutDateString = "9/3/15";
+		String discountPercent = "101";
 
+		int chargeDays = 2;
 		Exception exception = assertThrows(ToolRentalException.class, () -> {
-			when(toolRepository.findAll()).thenReturn(toolList);
-			Map<String, String> customQuery = new HashMap<>();
-			customQuery.put("code", toolCode);
-			customQuery.put("rentalDays", "5");
-			customQuery.put("discountPercent", "101");
-			customQuery.put("checkoutDate", "9/3/15");
-			toolController.getToolByCode(customQuery);
+			checkValues(JAKR, rentalDays, discountPercent, checkoutDateString, chargeDays);
 		});
 		assertTrue(exception.getMessage().contains(ErrorMessages.RENTAL_DISCOUNT.getErrorMessage()));
 	}
@@ -94,7 +96,6 @@ public class ToolRentalControllerTest {
 		// Rental days 3
 		// Discount 10%
 
-		Tool testTool = new Tool("LADW", "Ladder", "Werner", 1.99, true, true, false);
 		String rentalDays = "3";
 		String checkoutDateString = "7/2/2020";
 		String discountPercent = "10";
@@ -105,7 +106,7 @@ public class ToolRentalControllerTest {
 		// 7/5/2020 - Su Weekend. Charge day.
 
 		int chargeDays = 2;
-		checkValues(testTool, rentalDays, discountPercent, checkoutDateString, chargeDays);
+		checkValues(LADW, rentalDays, discountPercent, checkoutDateString, chargeDays);
 	}
 
 	@Test
@@ -115,7 +116,6 @@ public class ToolRentalControllerTest {
 		// Rental days 5
 		// Discount 25%
 
-		Tool testTool = new Tool("CHNS", "Chainsaw", "Stihl", 1.49, true, false, true);
 		String rentalDays = "5";
 		String checkoutDateString = "7/2/2020";
 		String discountPercent = "10";
@@ -128,7 +128,7 @@ public class ToolRentalControllerTest {
 		// 7/7/2015 - Tu Charge day. Due Date.
 
 		int chargeDays = 3;
-		checkValues(testTool, rentalDays, discountPercent, checkoutDateString, chargeDays);
+		checkValues(CHNS, rentalDays, discountPercent, checkoutDateString, chargeDays);
 	}
 
 	@Test
@@ -138,7 +138,6 @@ public class ToolRentalControllerTest {
 		// Rental days 6
 		// Discount 0%
 
-		Tool testTool = new Tool("JAKD", "Jackhammer", "DeWalt", 2.99, true, false, false);
 		String rentalDays = "6";
 		String checkoutDateString = "9/3/2015";
 		String discountPercent = "0";
@@ -151,7 +150,54 @@ public class ToolRentalControllerTest {
 		// 9/8/2015 - Tu Charge day.
 		// 9/9/2015 - Tu Charge day. Due Date.
 		int chargeDays = 3;
-		checkValues(testTool, rentalDays, discountPercent, checkoutDateString, chargeDays);
+		checkValues(JAKD, rentalDays, discountPercent, checkoutDateString, chargeDays);
+	}
+	
+	@Test
+	public void Test5() throws ToolRentalException, ParseException {
+		// Tool code JAKR
+		// Checkout date 7/2/2015
+		// Rental days 9
+		// Discount 0%
+
+		String rentalDays = "9";
+		String checkoutDateString = "7/2/2020";
+		String discountPercent = "0";
+
+		// 7/2/2015 - Th Checkout day. No charge.
+		// 7/3/2015 - Fr July 4th observed. Holiday. No charge.
+		// 7/4/2015 - Sa Weekend. No charge.
+		// 7/5/2015 - Su Weekend. No charge.
+		// 7/6/2015 - Mo Charge day.
+		// 7/7/2015 - Tu Charge day.
+		// 7/8/2015 - We Charge day.
+		// 7/9/2015 - Th Charge day.
+		// 7/10/2015 - Fr Charge day.
+		// 7/11/2015 - Sa No charge. Due Date
+
+		int chargeDays = 5;
+		checkValues(JAKR, rentalDays, discountPercent, checkoutDateString, chargeDays);
+	}
+	
+	@Test
+	public void Test6() throws ToolRentalException, ParseException {
+		// Tool code JAKR
+		// Checkout date 7/2/2020
+		// Rental days 4
+		// Discount 50%
+
+		String rentalDays = "4";
+		String checkoutDateString = "7/2/2020";
+		String discountPercent = "50";
+
+		// 7/2/2020 - Th Checkout day. No charge.
+		// 7/3/2020 - Fr July 4th observed. Holiday. No charge.
+		// 7/4/2020 - Sa Weekend. No charge.
+		// 7/5/2020 - Su Weekend. No charge.
+		// 7/5/2020 - Mo Charge day. Due Date.
+
+		int chargeDays = 1;
+		checkValues(JAKR, rentalDays, discountPercent, checkoutDateString, chargeDays);
 	}
 
 	private void checkValues(Tool tool, String rentalDays, String discountPercent, String checkoutDateString,

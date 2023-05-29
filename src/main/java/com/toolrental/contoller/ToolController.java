@@ -36,7 +36,6 @@ public class ToolController {
 
 	@GetMapping("/rent")
 	public RentalAgreement getToolByCode(@RequestParam Map<String, String> customQuery) throws ToolRentalException {
-
 		String code = customQuery.get("code");
 		String rentalDays = customQuery.get("rentalDays");
 		String discountPercent = customQuery.get("discountPercent");
