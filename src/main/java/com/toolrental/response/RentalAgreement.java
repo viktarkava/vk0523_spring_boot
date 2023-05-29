@@ -119,5 +119,4 @@ public class RentalAgreement {
 	public void setFinalCharge(String finalCharge) {
 		this.finalCharge = finalCharge;
 	}
-
 }

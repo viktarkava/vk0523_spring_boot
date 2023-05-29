@@ -20,12 +20,12 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.toolrental.response.RentalAgreement;
 import com.toolrental.contoller.ToolController;
 import com.toolrental.enity.Tool;
 import com.toolrental.exceptions.ToolRentalException;
 import com.toolrental.repository.ToolRepository;
 import com.toolrental.response.ErrorMessages;
-import com.toolrental.response.RentalAgreement;
 import com.toolrental.service.impl.RentalServiceImpl;
 import com.toolrental.utils.CustomRentalCalendar;
 

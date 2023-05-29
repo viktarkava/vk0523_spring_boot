@@ -10,11 +10,11 @@ import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.Date;
 
+import com.toolrental.response.RentalAgreement;
 import com.toolrental.enity.Tool;
 import com.toolrental.exceptions.ToolRentalException;
 import com.toolrental.repository.ToolRepository;
 import com.toolrental.response.ErrorMessages;
-import com.toolrental.response.RentalAgreement;
 import com.toolrental.service.RentalService;
 import com.toolrental.utils.CustomRentalCalendar;
 
@@ -87,6 +87,7 @@ public class RentalServiceImpl implements RentalService {
 		return rentPreDiscount * (100 - discount) / 100;
 	}
 
+	// TODO: remove print statements
 	private int getChargeDays(Tool tool, int daysOfRental, LocalDate startDate) {
 		int ret = 0;
 		// Charge days - Count of chargeable days, from day after checkout through and

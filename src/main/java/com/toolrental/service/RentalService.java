@@ -1,7 +1,7 @@
 package com.toolrental.service;
 
-import com.toolrental.exceptions.ToolRentalException;
 import com.toolrental.response.RentalAgreement;
+import com.toolrental.exceptions.ToolRentalException;
 
 //vk0523
 
