@@ -32,7 +32,6 @@ import com.toolrental.utils.CustomRentalCalendar;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 
 //vk0523
@@ -199,6 +198,63 @@ public class ToolRentalControllerTest {
 		int chargeDays = 1;
 		checkValues(JAKR, rentalDays, discountPercent, checkoutDateString, chargeDays);
 	}
+	
+	@Test
+	public void NegativeRentalDaysTest() throws ToolRentalException {
+		// Tool code JAKR
+		// Checkout date 9/3/15
+		// Rental days 5
+		// Discount 101%
+
+		String rentalDays = "-5";
+		String checkoutDateString = "9/3/15";
+		String discountPercent = "10";
+
+		int chargeDays = 2;
+		Exception exception = assertThrows(ToolRentalException.class, () -> {
+			checkValues(JAKR, rentalDays, discountPercent, checkoutDateString, chargeDays);
+		});
+		assertTrue(exception.getMessage().contains(ErrorMessages.RENTAL_DAY_COUNT.getErrorMessage()));
+	}
+	
+	@Test
+	public void NonExistentToolTest() throws ToolRentalException {
+		// Tool code JAKR
+		// Checkout date 9/3/15
+		// Rental days 5
+		// Discount 101%
+
+		String rentalDays = "5";
+		String checkoutDateString = "9/3/15";
+		String discountPercent = "10";
+
+		int chargeDays = 2;
+		
+		Tool AAA = new Tool("AAA", "AAA", "AAA", 2.99, true, false, false);
+		
+		Exception exception = assertThrows(ToolRentalException.class, () -> {
+			checkValues(AAA, rentalDays, discountPercent, checkoutDateString, chargeDays);
+		});
+		assertTrue(exception.getMessage().contains(ErrorMessages.TOOL_CODE_IS_NOT_PRESENT.getErrorMessage()));
+	}
+	
+	@Test
+	public void IncorrectDateTest() throws ToolRentalException {
+		// Tool code JAKR
+		// Checkout date 9/3/15
+		// Rental days 5
+		// Discount 101%
+
+		String rentalDays = "5";
+		String checkoutDateString = "date";
+		String discountPercent = "10";
+
+		int chargeDays = 2;
+		Exception exception = assertThrows(ToolRentalException.class, () -> {
+			checkValues(JAKR, rentalDays, discountPercent, checkoutDateString, chargeDays);
+		});
+		assertTrue(exception.getMessage().contains(ErrorMessages.INCORRECT_DATE.getErrorMessage()));
+	}
 
 	private void checkValues(Tool tool, String rentalDays, String discountPercent, String checkoutDateString,
 			int chargeDays) throws ToolRentalException, ParseException {
@@ -206,8 +262,8 @@ public class ToolRentalControllerTest {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");
 		dateFormatter.setLenient(false);
 
-		LocalDate checkoutDate = dateFormatter.parse(checkoutDateString).toInstant().atZone(ZoneId.systemDefault())
-				.toLocalDate();
+		LocalDate checkoutDate = rentalService.getCheckoutDate(checkoutDateString);
+		
 		String dueDateString = checkoutDate.plusDays(Integer.valueOf(rentalDays)).toString();
 		DecimalFormat df = new DecimalFormat("##,##0.00");
 		df.setRoundingMode(RoundingMode.UP);

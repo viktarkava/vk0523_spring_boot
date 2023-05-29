@@ -110,7 +110,7 @@ public class RentalServiceImpl implements RentalService {
 		return ret;
 	}
 
-	private LocalDate getCheckoutDate(String date) throws ToolRentalException {
+	public LocalDate getCheckoutDate(String date) throws ToolRentalException {
 		Date ret;
 		SimpleDateFormat fromUser = new SimpleDateFormat("MM/dd/yyyy");
 		fromUser.setLenient(false);
