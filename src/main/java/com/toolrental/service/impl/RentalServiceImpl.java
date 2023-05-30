@@ -32,34 +32,33 @@ public class RentalServiceImpl implements RentalService {
 	@Override
 	public RentalAgreement rentTool(String code, int rentalDays, int discoutPercent, String checkoutDateString)
 			throws ToolRentalException {
-		Tool ret = null;
+		Tool tool = null;
 		for (Tool t : toolRepository.findAll()) {
 			if (t.getCode().equals(code.toUpperCase())) {
-				ret = t;
+				tool = t;
 				break;
 			}
 		}
-		if (ret == null) {
+		if (tool == null) {
 			throw new ToolRentalException(code + ErrorMessages.TOOL_CODE_IS_NOT_PRESENT.getErrorMessage());
 		}
 		verifyDaysOfRental(rentalDays);
 		verifyDiscount(discoutPercent);
-		Double dailyCharge = ret.getDailyCharge();
+		Double dailyCharge = tool.getDailyCharge();
 		verifyDaysOfRental(rentalDays);
 		verifyDiscount(discoutPercent);
 		LocalDate checkoutDate = getCheckoutDate(checkoutDateString);
-		int chargeDays = getChargeDays(ret, rentalDays, checkoutDate);
+		int chargeDays = getChargeDays(tool, rentalDays, checkoutDate);
 
-		RentalAgreement agr = new RentalAgreement(ret.getCode(), ret.getType(), ret.getBrand(), rentalDays);
+		RentalAgreement agr = new RentalAgreement(tool.getCode(), tool.getType(), tool.getBrand(), rentalDays);
 		DecimalFormat df = new DecimalFormat("##,##0.00");
-		df.setRoundingMode(RoundingMode.UP);
 
 		agr.setRentalDays(rentalDays);
 		agr.setCheckoutDate(checkoutDate.toString());
 		agr.setDueDate(checkoutDate.plusDays(rentalDays).toString());
 		agr.setDailyRentalCharge(dailyCharge);
 		agr.setChargeDays(chargeDays);
-		double rentPreDiscount = calculateRentPreDiscount(ret, chargeDays);
+		double rentPreDiscount = calculateRentPreDiscount(tool, chargeDays);
 		agr.setPreDiscountCharge("$" + df.format(rentPreDiscount));
 		agr.setDiscountPercent(discoutPercent + "%");
 		double discountAmount = rentPreDiscount * discoutPercent / 100;
@@ -81,11 +80,7 @@ public class RentalServiceImpl implements RentalService {
 	}
 
 	double calculateRentPreDiscount(Tool tool, int chargeDays) throws ToolRentalException {
-		return chargeDays * tool.getDailyCharge();
-	}
-
-	double calculateRentWithDiscount(double rentPreDiscount, int discount) throws ToolRentalException {
-		return rentPreDiscount * (100 - discount) / 100;
+		return roundUp(chargeDays * tool.getDailyCharge());
 	}
 
 	private int getChargeDays(Tool tool, int daysOfRental, LocalDate startDate) {
@@ -120,5 +115,9 @@ public class RentalServiceImpl implements RentalService {
 			throw new ToolRentalException(ErrorMessages.INCORRECT_DATE.getErrorMessage());
 		}
 		return ret.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	}
+	
+	public double roundUp(double in) {
+		return Math.round(in * 100.0) / 100.0;
 	}
 }

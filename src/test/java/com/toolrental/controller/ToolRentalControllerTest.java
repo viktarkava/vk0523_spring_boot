@@ -29,7 +29,6 @@ import com.toolrental.response.ErrorMessages;
 import com.toolrental.service.impl.RentalServiceImpl;
 import com.toolrental.utils.CustomRentalCalendar;
 
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -266,7 +265,6 @@ public class ToolRentalControllerTest {
 		
 		String dueDateString = checkoutDate.plusDays(Integer.valueOf(rentalDays)).toString();
 		DecimalFormat df = new DecimalFormat("##,##0.00");
-		df.setRoundingMode(RoundingMode.UP);
 		double preDiscountCharge = chargeDays * tool.getDailyCharge();
 		String preDiscountChargeString = "$" + df.format(preDiscountCharge);
 		double discountAmount = chargeDays * tool.getDailyCharge() * Integer.valueOf(discountPercent) / 100;
